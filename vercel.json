@@ -1,0 +1,15 @@
+{
+    "buildCommand": "npm run build:assets",
+    "outputDirectory": "dist",
+    "functions": {
+      "api/chat.js": {
+        "maxDuration": 30
+      }
+    },
+    "rewrites": [
+      {
+        "source": "/(.*)",
+        "destination": "/$1"
+      }
+    ]
+  }

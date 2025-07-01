@@ -24,25 +24,92 @@ document.addEventListener('DOMContentLoaded', function() {
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 
+    // Function to add typing indicator
+    function addTypingIndicator() {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'message bot typing-indicator';
+        messageDiv.id = 'typing-indicator';
+        
+        const messageContent = document.createElement('div');
+        messageContent.className = 'message-content';
+        messageContent.textContent = 'Typing...';
+        
+        messageDiv.appendChild(messageContent);
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    // Function to remove typing indicator
+    function removeTypingIndicator() {
+        const typingIndicator = document.getElementById('typing-indicator');
+        if (typingIndicator) {
+            typingIndicator.remove();
+        }
+    }
+
+    // Function to call Gemini API through Vercel function
+    async function callGeminiAPI(userMessage) {
+        const systemPrompt = "You are a helpful and conversational AI assistant. Please respond in a friendly, engaging manner while being informative and helpful.";
+        
+        try {
+            const response = await fetch('/api/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    message: userMessage,
+                    systemPrompt: systemPrompt
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            
+            if (data.response) {
+                return data.response;
+            } else {
+                throw new Error('Invalid response format');
+            }
+        } catch (error) {
+            console.error('Error calling API:', error);
+            return "I'm sorry, I'm having trouble connecting right now. Please try again later.";
+        }
+    }
+
     // Function to send message
-    function sendMessage() {
+    async function sendMessage() {
         const message = messageInput.value.trim();
         if (message) {
             addMessage(message, true);
             messageInput.value = '';
             
-            // Simulate bot response (you can replace this with actual bot logic)
-            setTimeout(() => {
-                const responses = [
-                    "That's an interesting question! Let me think about that.",
-                    "Thanks for your message! I'd be happy to help with that.",
-                    "Great point! This project involved a lot of creative problem-solving.",
-                    "I appreciate your interest in my work!",
-                    "That's exactly the kind of challenge I enjoy working on."
-                ];
-                const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-                addMessage(randomResponse, false);
-            }, 1000);
+            // Disable input while processing
+            messageInput.disabled = true;
+            sendButton.disabled = true;
+            
+            // Add typing indicator
+            addTypingIndicator();
+            
+            try {
+                // Call Gemini API through Vercel function
+                const botResponse = await callGeminiAPI(message);
+                
+                // Remove typing indicator and add bot response
+                removeTypingIndicator();
+                addMessage(botResponse, false);
+            } catch (error) {
+                removeTypingIndicator();
+                addMessage("I'm sorry, something went wrong. Please try again.", false);
+            } finally {
+                // Re-enable input
+                messageInput.disabled = false;
+                sendButton.disabled = false;
+                messageInput.focus();
+            }
         }
     }
 
@@ -50,7 +117,7 @@ document.addEventListener('DOMContentLoaded', function() {
     sendButton.addEventListener('click', sendMessage);
     
     messageInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
+        if (e.key === 'Enter' && !messageInput.disabled) {
             sendMessage();
         }
     });
