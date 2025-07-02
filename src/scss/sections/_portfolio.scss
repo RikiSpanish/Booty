@@ -3,6 +3,14 @@
 // 
 
 .portfolio {
+    .portfolio-item-wrapper {
+        .portfolio-item-name {
+            color: $secondary;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+        }
+    }
+
     .portfolio-item {
         cursor: pointer;
         position: relative;
@@ -15,7 +23,7 @@
             position: absolute;
             top: 0;
             left: 0;
-            transition: $transition-base;
+            transition: $transition-base; // Restore full transition for smooth effect
             opacity: 0;
             background-color: fade-out($primary, .1);
 
@@ -24,7 +32,91 @@
             }
 
             .portfolio-item-caption-content {
-                font-size: 1.5rem;
+                padding: 2rem;
+                
+                .portfolio-caption-title {
+                    font-size: 1.5rem;
+                    font-weight: 700;
+                    text-transform: uppercase;
+                    letter-spacing: 0.1em;
+                    margin-bottom: 0;
+                }
+
+                .portfolio-caption-description {
+                    font-size: 1rem;
+                    margin-bottom: 0;
+                    opacity: 0.9;
+                }
+
+                .divider-custom {
+                    margin: 1rem 0;
+                    width: 100%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    position: relative; // Add positioning context
+
+                    .divider-custom-line {
+                        // Fixed width for consistent line sizes
+                        width: 4rem;
+                        max-width: none; // Remove the max-width constraint
+                        height: 0.25rem;
+                        background-color: $white;
+                        border-radius: 1rem;
+                        border-color: $white !important;
+                        flex-shrink: 0; // Prevent lines from shrinking
+                        position: relative; // Ensure stable positioning
+                        
+                        // Responsive sizing
+                        @media (max-width: 768px) {
+                            width: 3rem;
+                        }
+                        
+                        @media (max-width: 480px) {
+                            width: 2.5rem;
+                        }
+                    }
+
+                    .divider-custom-icon {
+                        color: $white;
+                        font-size: 1.5rem;
+                        margin: 0 1rem; // Add consistent spacing around icon
+                        flex-shrink: 0; // Prevent icon from shrinking
+                        display: inline-flex; // Change to inline-flex for better stability
+                        align-items: center;
+                        justify-content: center;
+                        width: 2rem; // Fixed width to prevent shifting
+                        height: 2rem; // Fixed height for stability
+                        position: relative; // Ensure stable positioning
+                        transform: translateZ(0); // Force hardware acceleration for stability
+                        backface-visibility: hidden; // Prevent sub-pixel rendering issues
+                        
+                        // Only block transform and position transitions, allow color transitions
+                        transition: color $transition-base !important;
+                        
+                        // Responsive icon sizing
+                        @media (max-width: 768px) {
+                            font-size: 1.25rem;
+                            margin: 0 0.75rem;
+                            width: 1.75rem;
+                            height: 1.75rem;
+                        }
+                        
+                        @media (max-width: 480px) {
+                            font-size: 1rem;
+                            margin: 0 0.5rem;
+                            width: 1.5rem;
+                            height: 1.5rem;
+                        }
+                        
+                        // Ensure the icon itself doesn't move but can change color
+                        i {
+                            transition: color inherit !important;
+                            transform: none !important;
+                            position: static;
+                        }
+                    }
+                }
             }
         }
     }
