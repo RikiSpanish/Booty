@@ -4,9 +4,47 @@ document.addEventListener('DOMContentLoaded', function() {
     const chatMessages = document.getElementById('chatMessages');
     const chatTitle = document.getElementById('chatTitle');
 
-    // Get portfolio name from URL hash
-    const portfolioName = window.location.hash.substring(1) || 'portfolio';
-    chatTitle.textContent = `${portfolioName.charAt(0).toUpperCase() + portfolioName.slice(1)} Chat`;
+    // Store conversation history
+    let conversationHistory = [];
+
+    // Get character name from URL hash
+    const characterKey = window.location.hash.substring(1) || 'luffy';
+    const character = CHARACTER_PROMPTS[characterKey] || CHARACTER_PROMPTS.luffy;
+    
+    // Update chat title with character name
+    chatTitle.textContent = `${character.name} Chat`;
+
+    // Clear fake chat history and add character-specific greeting
+    function initializeChat() {
+        chatMessages.innerHTML = '';
+        conversationHistory = []; // Reset conversation history
+        
+        // Add character-specific greeting
+        const greetings = {
+            luffy: "Hey! I'm Luffy! I'm gonna be the Pirate King! Wanna join my crew? Do you have any meat?",
+            zoro: "I'm Zoro. I'm training to become the world's greatest swordsman. What do you want?",
+            nami: "Hi there! I'm Nami, the navigator. Are you here to discuss treasure maps or weather patterns?",
+            usopp: "I am the great Captain Usopp! I have 8,000 followers and I've defeated countless enemies! ...Okay, maybe not that many, but I'm still brave!",
+            sanji: "Welcome! I'm Sanji, the cook. Can I prepare something delicious for you? And if you're a beautiful lady... *heart eyes*",
+            chopper: "H-hello! I'm Chopper, the doctor! Don't think I'm happy to meet you or anything! *does happy dance*",
+            robin: "Hello. I'm Robin, the archaeologist. I find ancient history fascinating... along with the various ways civilizations have met their demise.",
+            franky: "SUPER! I'm Franky, the shipwright! Check out these awesome modifications! *strikes pose*",
+            brook: "Yohohoho! I'm Brook, the musician! Pleased to meet you! Say, you wouldn't happen to be wearing panties, would you? Skull joke!",
+            jinbe: "Greetings. I am Jinbe, helmsman of the Straw Hat Pirates. It's an honor to make your acquaintance."
+        };
+        
+        const greeting = greetings[characterKey] || greetings.luffy;
+        addMessage(greeting, false);
+        
+        // Add greeting to conversation history
+        conversationHistory.push({
+            role: "assistant",
+            content: greeting
+        });
+    }
+
+    // Initialize chat with character-specific content
+    initializeChat();
 
     // Function to add message to chat
     function addMessage(content, isUser = false) {
@@ -47,9 +85,15 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Function to call Gemini API through Vercel function
+    // Function to call Gemini API through Vercel function with conversation history
     async function callGeminiAPI(userMessage) {
-        const systemPrompt = "You are a helpful and conversational AI assistant. Please respond in a friendly, engaging manner while being informative and helpful.";
+        const systemPrompt = character.systemPrompt;
+        
+        // Add user message to conversation history
+        conversationHistory.push({
+            role: "user",
+            content: userMessage
+        });
         
         try {
             const response = await fetch('/api/chat', {
@@ -59,7 +103,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 body: JSON.stringify({
                     message: userMessage,
-                    systemPrompt: systemPrompt
+                    systemPrompt: systemPrompt,
+                    characterName: character.name,
+                    conversationHistory: conversationHistory.slice(-10) // Send last 10 messages to avoid token limits
                 })
             });
 
@@ -70,13 +116,27 @@ document.addEventListener('DOMContentLoaded', function() {
             const data = await response.json();
             
             if (data.response) {
+                // Add assistant response to conversation history
+                conversationHistory.push({
+                    role: "assistant",
+                    content: data.response
+                });
+                
                 return data.response;
             } else {
                 throw new Error('Invalid response format');
             }
         } catch (error) {
             console.error('Error calling API:', error);
-            return "I'm sorry, I'm having trouble connecting right now. Please try again later.";
+            const errorMessage = "I'm sorry, I'm having trouble connecting right now. Please try again later.";
+            
+            // Add error message to conversation history
+            conversationHistory.push({
+                role: "assistant",
+                content: errorMessage
+            });
+            
+            return errorMessage;
         }
     }
 
@@ -113,6 +173,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Function to clear conversation history (optional)
+    function clearConversation() {
+        initializeChat();
+    }
+
     // Event listeners
     sendButton.addEventListener('click', sendMessage);
     
@@ -124,4 +189,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Focus on input when page loads
     messageInput.focus();
+    
+    // Optional: Add clear conversation button functionality
+    const clearButton = document.getElementById('clearButton');
+    if (clearButton) {
+        clearButton.addEventListener('click', clearConversation);
+    }
 });
