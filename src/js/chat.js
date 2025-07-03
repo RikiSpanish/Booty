@@ -11,6 +11,38 @@ document.addEventListener('DOMContentLoaded', function() {
     const characterKey = window.location.hash.substring(1) || 'luffy';
     const character = CHARACTER_PROMPTS[characterKey] || CHARACTER_PROMPTS.luffy;
     
+    // Character color scheme
+    const characterColors = {
+        luffy: '#E62C39',     // red
+        zoro: '#28a745',      // green
+        nami: '#fd7e14',      // orange
+        usopp: '#ffc107',     // yellow
+        sanji: '#007bff',     // blue
+        chopper: '#e83e8c',   // pink
+        robin: '#6f42c1',     // purple
+        franky: '#17a2b8',    // light blue
+        brook: '#343a40',     // black
+        jinbe: '#CC7722'      // ochre
+    };
+
+    // Character image file extensions
+    const characterImageExtensions = {
+        luffy: 'png',
+        zoro: 'jpg',
+        nami: 'png',
+        usopp: 'png',
+        sanji: 'jpg',
+        chopper: 'jpg',
+        robin: 'jpg',
+        franky: 'jpg',
+        brook: 'jpg',
+        jinbe: 'jpg'
+    };
+
+    // Set CSS custom properties for the current character
+    const characterColor = characterColors[characterKey] || characterColors.luffy;
+    document.documentElement.style.setProperty('--character-color', characterColor);
+    
     // Update chat title with character name
     chatTitle.textContent = `${character.name} Chat`;
 
@@ -50,6 +82,18 @@ document.addEventListener('DOMContentLoaded', function() {
     function addMessage(content, isUser = false) {
         const messageDiv = document.createElement('div');
         messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
+        
+        // Add profile picture for bot messages
+        if (!isUser) {
+            const profilePic = document.createElement('div');
+            profilePic.className = 'profile-pic';
+            const img = document.createElement('img');
+            const fileExtension = characterImageExtensions[characterKey] || 'jpg';
+            img.src = `assets/img/chat/${characterKey}.${fileExtension}`;
+            img.alt = character.name;
+            profilePic.appendChild(img);
+            messageDiv.appendChild(profilePic);
+        }
         
         const messageContent = document.createElement('div');
         messageContent.className = 'message-content';

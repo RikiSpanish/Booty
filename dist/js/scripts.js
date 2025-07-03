@@ -1,7 +1,7 @@
 /*!
-* Start Bootstrap - Freelancer v7.0.7 (https://startbootstrap.com/theme/freelancer)
-* Copyright 2013-2025 Start Bootstrap
-* Licensed under MIT (https://github.com/StartBootstrap/startbootstrap-freelancer/blob/master/LICENSE)
+* Start Bootstrap - One Piece Booty v7.0.7 (https://startbootstrap.com/theme/freelancer)
+* Copyright 2013-2025 Jake Fleischer
+* Licensed under MIT (https://github.com/StartBootstrap/startbootstrap-one_piece_booty/blob/master/LICENSE)
 */
 window.addEventListener('DOMContentLoaded', event => {
 
