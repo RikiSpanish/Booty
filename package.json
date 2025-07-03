@@ -1,6 +1,8 @@
 {
-    "title": "Freelancer",
-    "name": "startbootstrap-freelancer",
+    "title": "One Piece Booty",
+    "name": "startbootstrap-one_piece_booty",
+    "description": "One Piece character chat application",
+    "main": "index.js",
     "version": "7.0.7",
     "scripts": {
         "build": "npm run clean && npm run build:pug && npm run build:scss && npm run build:scripts && npm run build:assets",
@@ -12,7 +14,6 @@
         "start": "npm run build && node scripts/start.js",
         "start:debug": "npm run build && node scripts/start-debug.js"
     },
-    "description": "A freelancer portfolio HTML theme for Bootstrap.",
     "keywords": [
         "css",
         "sass",
@@ -29,16 +30,17 @@
         "email": "feedback@startbootstrap.com"
     },
     "license": "MIT",
-    "author": "Start Bootstrap",
+    "author": "Jake Fleischer",
     "contributors": [
-        "David Miller (https://davidmiller.io/)"
+        "Jake Fleischer"
     ],
     "repository": {
         "type": "git",
         "url": "https://github.com/StartBootstrap/startbootstrap-freelancer.git"
     },
     "dependencies": {
-        "bootstrap": "5.2.3"
+        "bootstrap": "5.2.3",
+        "@google/generative-ai": "^0.1.0"
     },
     "devDependencies": {
         "autoprefixer": "10.4.14",
@@ -50,6 +52,7 @@
         "pug": "3.0.2",
         "sass": "1.60.0",
         "shelljs": "0.8.5",
-        "upath": "2.0.1"
+        "upath": "2.0.1",
+        "@vercel/node": "^3.0.0"
     }
 }
