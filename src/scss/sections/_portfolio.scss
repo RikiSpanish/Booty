@@ -18,6 +18,27 @@
         max-width: 25rem;
         border-radius: $border-radius;
         overflow: hidden;
+        transition: all $transition-base;
+
+        // Add radial glow effect to the portfolio item container
+        box-shadow: 
+            0 0 5px rgba(255, 255, 255, 0.1),
+            0 0 10px rgba(255, 255, 255, 0.08),
+            0 0 20px rgba(255, 255, 255, 0.06),
+            0 0 30px rgba(255, 255, 255, 0.04);
+        
+        &:hover {
+            box-shadow: 
+                0 0 10px rgba(255, 255, 255, 0.2),
+                0 0 20px rgba(255, 255, 255, 0.15),
+                0 0 30px rgba(255, 255, 255, 0.1),
+                0 0 40px rgba(255, 255, 255, 0.08),
+                0 0 60px rgba(255, 255, 255, 0.06);
+        }
+
+        img {
+            transition: all $transition-base;
+        }
 
         .portfolio-item-caption {
             position: absolute;
@@ -117,6 +138,49 @@
                         }
                     }
                 }
+            }
+        }
+    }
+}
+
+// Character color definitions for specific glow effects
+$character-colors: (
+    luffy: #E62C39,
+    zoro: #28a745,
+    nami: #fd7e14,
+    usopp: #ffc107,
+    sanji: #007bff,
+    chopper: #e83e8c,
+    robin: #6f42c1,
+    franky: #17a2b8,
+    brook: #343a40,
+    jinbe: #CC7722
+);
+
+// Generate character-specific radial glow styles
+@each $character, $color in $character-colors {
+    .portfolio-item[href="##{$character}"] {
+        border: 3px solid $color;
+        box-shadow: 
+            0 0 10px rgba($color, 0.4),
+            0 0 20px rgba($color, 0.3),
+            0 0 30px rgba($color, 0.2),
+            0 0 40px rgba($color, 0.1);
+        
+        &:hover {
+            box-shadow: 
+                0 0 15px rgba($color, 0.6),
+                0 0 30px rgba($color, 0.5),
+                0 0 45px rgba($color, 0.4),
+                0 0 60px rgba($color, 0.3),
+                0 0 80px rgba($color, 0.2);
+        }
+        
+        .portfolio-item-caption {
+            background-color: fade-out($color, 0.1);
+            
+            &:hover {
+                background-color: fade-out($color, 0.05);
             }
         }
     }
