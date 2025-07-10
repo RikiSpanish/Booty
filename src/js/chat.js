@@ -83,13 +83,23 @@ document.addEventListener('DOMContentLoaded', function() {
         const messageDiv = document.createElement('div');
         messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
         
+        let displayContent = content;
+        let emotion = 'neutral';
+        
         // Add profile picture for bot messages
         if (!isUser) {
+            // Parse emotion from content
+            const emotionMatch = content.match(/\[emotion:\s*(\w+)\]/i);
+            if (emotionMatch) {
+                emotion = emotionMatch[1].toLowerCase();
+                displayContent = content.replace(emotionMatch[0], '').trim();
+            }
+            
             const profilePic = document.createElement('div');
             profilePic.className = 'profile-pic';
             const img = document.createElement('img');
-            const fileExtension = characterImageExtensions[characterKey] || 'jpg';
-            img.src = `assets/img/chat/${characterKey}.${fileExtension}`;
+            const fileExtension = 'jpg';//characterImageExtensions[characterKey] || 'jpg';
+            img.src = `assets/img/chat/${characterKey}_${emotion}.${fileExtension}`;
             img.alt = character.name;
             profilePic.appendChild(img);
             messageDiv.appendChild(profilePic);
@@ -97,7 +107,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const messageContent = document.createElement('div');
         messageContent.className = 'message-content';
-        messageContent.textContent = content;
+        messageContent.textContent = displayContent;
         
         messageDiv.appendChild(messageContent);
         chatMessages.appendChild(messageDiv);
@@ -130,14 +140,14 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Function to call Gemini API through Vercel function with conversation history
-    async function callGeminiAPI(userMessage) {
-        const systemPrompt = character.systemPrompt;
-        
-        // Add user message to conversation history
-        conversationHistory.push({
-            role: "user",
-            content: userMessage
-        });
+        async function callGeminiAPI(userMessage) {
+            const systemPrompt = character.systemPrompt + " At the end of your response, include your current emotion in the format [emotion: emotion_name] where emotion_name is one of neutral, happy, scared, mad, sad. Choose the emotion that best matches your current feeling based on the conversation.";
+            
+            // Add user message to conversation history
+            conversationHistory.push({
+                role: "user",
+                content: userMessage
+            });
         
         try {
             const response = await fetch('/api/chat', {
